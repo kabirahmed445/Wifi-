@@ -4,7 +4,7 @@ Live WiFi sensing monitor — collects RSSI from Windows WiFi and classifies
 presence/motion in real-time using the ADR-013 commodity sensing pipeline.
 
 Usage:
-    python v1/tests/integration/live_sense_monitor.py
+    python archive/v1/tests/integration/live_sense_monitor.py
 
 Walk around the room (especially between laptop and router) to trigger detection.
 Press Ctrl+C to stop.
@@ -12,9 +12,12 @@ Press Ctrl+C to stop.
 import sys
 import time
 
-from v1.src.sensing.rssi_collector import WindowsWifiCollector
-from v1.src.sensing.feature_extractor import RssiFeatureExtractor
-from v1.src.sensing.classifier import PresenceClassifier
+# পাথ সেট করুন
+sys.path.insert(0, 'archive/v1')
+
+from src.sensing.rssi_collector_win import WindowsWifiCollector
+from src.sensing.feature_extractor import RssiFeatureExtractor
+from src.sensing.classifier import PresenceClassifier
 
 SAMPLE_RATE = 2.0       # Hz (netsh is slow, 2 Hz is practical max)
 WINDOW_SEC = 15.0        # Analysis window
@@ -25,8 +28,8 @@ def main():
     collector = WindowsWifiCollector(interface="Wi-Fi", sample_rate_hz=SAMPLE_RATE)
     extractor = RssiFeatureExtractor(window_seconds=WINDOW_SEC)
     classifier = PresenceClassifier(
-        presence_variance_threshold=0.3,   # Lower threshold for netsh quantization
-        motion_energy_threshold=0.05,
+        presence_variance_threshold=0.05,   # Lower threshold for netsh quantization
+        motion_energy_threshold=0.02,
     )
 
     print("=" * 65)
